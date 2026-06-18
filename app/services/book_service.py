@@ -2,8 +2,7 @@ from sqlalchemy.orm import Session
 from app.models.models import Book
 from app.schemas.book_schemas import (
     BookCreate,
-    BookPublicUpdate,
-    BookAdminUpdate,
+    BookUpdate,
 )
 from typing import Optional, Union
 from datetime import datetime
@@ -27,7 +26,7 @@ class BookService:
     def update_book_entry(
         db: Session,
         entry_id: int,
-        update_data: Union[BookAdminUpdate, BookPublicUpdate],
+        update_data: BookUpdate,
         user_id: int,
     ) -> Optional[Book]:
         """Atnaujina knygos įrašo duomenis DB."""
@@ -40,8 +39,8 @@ class BookService:
         for key, value in update_dict.items():
             setattr(db_book, key, value)
 
-        db_book["modified_at"] = datetime.now()
-        db_book["modified_by_user_id"] = user_id
+        db_book.modified_at = datetime.now()
+        db_book.modified_by_user_id = user_id
 
         db.commit()
         db.refresh(db_book)

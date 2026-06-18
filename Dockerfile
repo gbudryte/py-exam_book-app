@@ -16,5 +16,6 @@ COPY ./app /code/app
 # Copy the .env file so the app can read it via os.getenv()
 COPY ./.env /code/.env
 
+ENV DOCKER_ENV=true
 # Command to run uvicorn when the container starts
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]

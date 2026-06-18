@@ -28,10 +28,15 @@ class User(Base):
     categories = relationship("Category", back_populates="created_by")
 
     books_created = relationship(
-        "Book", back_populates="created_by", cascade="all, delete-orphan"
+        "Book",
+        back_populates="created_by",
+        cascade="all, delete-orphan",
+        foreign_keys="Book.created_by_user_id",
     )
 
-    books_modified = relationship("Book", back_populates="modified_by")
+    books_modified = relationship(
+        "Book", back_populates="modified_by", foreign_keys="Book.modified_by_user_id"
+    )
 
 
 class Category(Base):
@@ -66,6 +71,10 @@ class Book(Base):
     )
     modified_at = Column(TIMESTAMP, nullable=True)
 
-    created_by = relationship("User", back_populates="books_created")
-    modified_by = relationship("User", back_populates="books_modified")
+    created_by = relationship(
+        "User", back_populates="books_created", foreign_keys=[created_by_user_id]
+    )
+    modified_by = relationship(
+        "User", back_populates="books_modified", foreign_keys=[modified_by_user_id]
+    )
     category = relationship("Category", back_populates="books")

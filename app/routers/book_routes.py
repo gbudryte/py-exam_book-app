@@ -79,28 +79,32 @@ def get_my_book_entries(
     return books
 
 
-@router.put("/{book_enrty_id}", response_model=BookPublicResponse)
-def update_existing_reservation(
+@router.put("/{entry_id}", response_model=BookPublicResponse)
+def update_existing_entry(
     entry_id: int,
     payload: BookUpdate,
-    current_user: User = Depends(AuthService.get_current_user),
+    current_user=Depends(AuthService.get_current_user),
     db: Session = Depends(get_db),
 ):
-    """Rezervacijos redagavimas (su teisių patikra)."""
+
     db_res = db.query(Book).filter(Book.id == entry_id).first()
     if not db_res:
-        raise HTTPException(status_code=404, detail="Book entry not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Book entry not found"
+        )
 
-    # Leidžiame redaguoti tik jei vartotojas yra Adminas ARBA tai yra paties user įrašas
     if (
         current_user.role != UserRole.ADMIN
         and db_res.created_by_user_id != current_user.id
     ):
         raise HTTPException(
-            status_code=403, detail="You do not have a permission to update this entry"
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="You do not have a permission to update this entry",
         )
 
-    updated_res = BookService.update_reservation(db, entry_id, payload)
+    updated_res = BookService.update_reservation(
+        db=db, entry_id=entry_id, payload=payload, modifier_id=current_user.id
+    )
     return updated_res
 
 
