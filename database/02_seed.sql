@@ -1,10 +1,15 @@
--- ==========================================
--- 1. SEED USERS (Visi slaptažodžiai po maišos yra: 'Test123')
--- ==========================================
+USE books_db;
+
+-- Clear out any old lingering data to prevent duplicate key errors
+SET FOREIGN_KEY_CHECKS = 0;
+TRUNCATE TABLE users;
+SET FOREIGN_KEY_CHECKS = 1;
+
+-- Insert Seed Users (All passwords are 'Test123' before hashing)
 INSERT INTO users (id, name, email, password_hash, role) VALUES
-(1, 'Tomas Adminas', 'admin@example.com', '$2b$12$6R2b0SBlxV23fD6K/EaIe.T0gXW/T09M9hK9wJ1hE2rO3wZqXyF5q', 'ADMIN'),
-(2, 'Jonas Vartotojas', 'jonas@example.com', '$2b$12$6R2b0SBlxV23fD6K/EaIe.T0gXW/T09M9hK9wJ1hE2rO3wZqXyF5q', 'USER'),
-(3, 'Lina Skaitytoja', 'lina@example.com', '$2b$12$6R2b0SBlxV23fD6K/EaIe.T0gXW/T09M9hK9wJ1hE2rO3wZqXyF5q', 'USER');
+(1, 'Tomas Adminas', 'admin@example.com', '$2b$12$zIe4A1lB1V/a4uTjX8kFjuA7L7X2.tXwAghH9nFwCO4WcO6GfKki2', 'ADMIN'),
+(2, 'Jonas Vartotojas', 'jonas@example.com', '$2b$12$zIe4A1lB1V/a4uTjX8kFjuA7L7X2.tXwAghH9nFwCO4WcO6GfKki2', 'USER'),
+(3, 'Lina Skaitytoja', 'lina@example.com', '$2b$12$zIe4A1lB1V/a4uTjX8kFjuA7L7X2.tXwAghH9nFwCO4WcO6GfKki2', 'USER');
 
 -- ==========================================
 -- 2. SEED CATEGORIES (5 kategorijos)
@@ -39,7 +44,7 @@ INSERT INTO books (name, author, category_id, description, rating, created_by_us
 ('Alexander Hamilton', 'Ron Chernow', 2, 'Biography of the US founding father.', 5, 2),
 ('Zero to One', 'Peter Thiel', 3, 'Notes on startups, or how to build the future.', 4, 2),
 ('Sherlock Holmes Collection', 'Arthur Conan Doyle', 4, 'Classic detective mysteries.', 5, 2),
-('You Don\'t Know JS', 'Kyle Simpson', 5, 'Deep dive into JavaScript mechanics.', 4, 2),
+('You Don''t Know JS', 'Kyle Simpson', 5, 'Deep dive into JavaScript mechanics.', 4, 2),
 ('Foundation', 'Isaac Asimov', 1, 'The rise and fall of a galactic empire.', 5, 2),
 ('The Wright Brothers', 'David McCullough', 2, 'The story of aviation pioneers.', 4, 2),
 ('The Intelligent Investor', 'Benjamin Graham', 3, 'The definitive book on value investing.', 5, 2),
@@ -55,6 +60,6 @@ INSERT INTO books (name, author, category_id, description, rating, created_by_us
 ('Refactoring', 'Martin Fowler', 5, 'Improving the design of existing code.', 5, 3),
 ('The Name of the Wind', 'Patrick Rothfuss', 1, 'A beautifully written fantasy epic.', 5, 3),
 ('Team of Rivals', 'Doris Kearns Goodwin', 2, 'The political genius of Abraham Lincoln.', 5, 3),
-('Good to Great', 'Jim Collins', 3, 'Why some companies make the leap and others don\'t.', 4, 3),
+('Good to Great', 'Jim Collins', 3, 'Why some companies make the leap and others don''t.', 4, 3),
 ('The Silent Patient', 'Alex Michaelides', 4, 'A shocking psychological thriller.', 4, 3),
 ('The Pragmatic Programmer', 'Andrew Hunt', 5, 'Your journey to mastery.', 5, 3);
