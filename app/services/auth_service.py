@@ -9,40 +9,42 @@ from app.database import get_db
 from sqlalchemy.orm import Session
 from passlib.context import CryptContext
 from fastapi.security import OAuth2PasswordBearer
-import hashlib
+import bcrypt
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
 
 load_dotenv()
 
-
-SECRET_KEY = os.getenv(
-    "JWT_SECRET_KEY",
-)
+SECRET_KEY = os.getenv("JWT_SECRET_KEY")
 ALGORITHM = os.getenv("JWT_ALGORITHM")
 EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES"))
-
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
 class AuthService:
     @staticmethod
     def hash_password(password: str) -> str:
         """Užkoduoja atvirą slaptažodį į hash tekstą."""
-        # 1. Force generate a SHA-256 string (64 characters total)
-        pre_hashed = hashlib.sha256(password.encode("utf-8")).hexdigest()
+        # Truncate to 72 chars to prevent bcrypt overflow errors on massive strings
+        password_bytes = password.encode("utf-8")[:72]
 
-        # 2. Pass it directly into the context
-        return pwd_context.hash(pre_hashed)
+        # Generate a salt and hash the password
+        salt = bcrypt.gensalt()
+        hashed_bytes = bcrypt.hashpw(password_bytes, salt)
+
+        # Return as a string to store cleanly in the database
+        return hashed_bytes.decode("utf-8")
 
     @staticmethod
     def verify_password(plain_password: str, hashed_password: str) -> bool:
         """Patikrina, ar prisijungimo metu įvestas slaptažodis sutampa su esančiu DB."""
-        # 1. Re-hash the login attempt password with SHA-256
-        pre_hashed = hashlib.sha256(plain_password.encode("utf-8")).hexdigest()
+        try:
+            password_bytes = plain_password.encode("utf-8")[:72]
+            hashed_bytes = hashed_password.encode("utf-8")
 
-        # 2. Verify against the database hash
-        return pwd_context.verify(pre_hashed, hashed_password)
+            # Verify the plain password against the stored database hash
+            return bcrypt.checkpw(password_bytes, hashed_bytes)
+        except Exception:
+            return False
 
     @classmethod
     def register_user(cls, db: Session, user_data: UserCreate) -> User:
