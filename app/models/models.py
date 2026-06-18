@@ -5,7 +5,6 @@ from sqlalchemy import (
     String,
     Enum,
     ForeignKey,
-    DateTime,
     TIMESTAMP,
     func,
 )
