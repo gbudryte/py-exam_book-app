@@ -58,15 +58,25 @@ class BookService:
         db.commit()
         return True
 
-    def get_books_by_category(db: Session, category_name):
+    def get_books(
+        self,
+        db: Session,
+        book_name=None,
+        category_name=None,
+        sort_direction=None,
+        target_user=None,
+    ):
         query = db.query(Book)
         if category_name:
             query = query.filter(Book.category.name == category_name)
-        return query
+        if book_name:
+            query = query.filter(Book.name.ilike(f"%{book_name}%"))
+        if sort_direction:
+            if sort_direction.lower() == "acs":
+                query = query.order_by(Book.rating.asc())
+            else:
+                query = query.order_by(Book.rating.desc())
+        if target_user:
+            query = query.filter(Book.created_by_user_id == target_user)
 
-    def sort_books_by_rating(db: Session, direction):
-        query = db.query(Book)
-        if direction.lower() == "acs":
-            query = query.order_by(Book.rating.asc())
-        else:
-            query = query.order_by(Book.rating.desc())
+        return query

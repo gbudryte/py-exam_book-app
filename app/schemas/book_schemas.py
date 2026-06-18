@@ -40,12 +40,8 @@ class BookAdminResponse(BookPublicResponse):
     created_by: UserResponse
 
 
-class BookPublicUpdate(BookBase):
+class BookUpdate(BookBase):
     name: Optional[str] = Field(min_length=3, max_length=255)
     author: Optional[str] = Field(min_length=3, max_length=55)
     category_id: Optional[int]
     rating: Optional[int] = Field(ge=1, le=5)
-
-
-class BookAdminUpdate(BookPublicUpdate):
-    created_by: Optional[UserBase]
