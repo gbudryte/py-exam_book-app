@@ -29,13 +29,19 @@ class AuthService:
     @staticmethod
     def hash_password(password: str) -> str:
         """Užkoduoja atvirą slaptažodį į hash tekstą."""
+        # 1. Force generate a SHA-256 string (64 characters total)
         pre_hashed = hashlib.sha256(password.encode("utf-8")).hexdigest()
+
+        # 2. Pass it directly into the context
         return pwd_context.hash(pre_hashed)
 
     @staticmethod
     def verify_password(plain_password: str, hashed_password: str) -> bool:
         """Patikrina, ar prisijungimo metu įvestas slaptažodis sutampa su esančiu DB."""
+        # 1. Re-hash the login attempt password with SHA-256
         pre_hashed = hashlib.sha256(plain_password.encode("utf-8")).hexdigest()
+
+        # 2. Verify against the database hash
         return pwd_context.verify(pre_hashed, hashed_password)
 
     @classmethod
