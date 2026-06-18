@@ -17,32 +17,35 @@ class BookBase(BaseModel):
         if not any(char.isalnum() for char in value):
             raise ValueError("Book name should contain letters or numbers")
         return value
-    
+
     @field_validator("author")
     @classmethod
     def ensure_name_is_without_spec_symbols(cls, value: str):
-        if re.search(r'[^a-zA-Z0-9 ]', value):
-            raise ValueError('author_name must not contain special characters')
+        if re.search(r"[^a-zA-Z0-9 ]", value):
+            raise ValueError("author_name must not contain special characters")
         return value
-    
+
 
 class BookCreate(BookBase):
     pass
+
 
 class BookPublicResponse(BookBase):
     created_by: UserBase
     created_at: datetime
     modified_at: Optional[datetime] = None
 
+
 class BookAdminResponse(BookPublicResponse):
     created_by: UserResponse
 
+
 class BookPublicUpdate(BookBase):
-    modified_at: datetime
-
-class BookAdminUpdate(BookAdminResponse):
-    modified_at: datetime
-
-
+    name: Optional[str] = Field(min_length=3, max_length=255)
+    author: Optional[str] = Field(min_length=3, max_length=55)
+    category_id: Optional[int]
+    rating: Optional[int] = Field(ge=1, le=5)
 
 
+class BookAdminUpdate(BookPublicUpdate):
+    created_by: Optional[UserBase]

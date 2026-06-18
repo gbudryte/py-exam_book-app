@@ -8,7 +8,7 @@ CREATE TABLE users(
 
 CREATE TABLE categories(
     id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(50) NOT NULL,
+    name VARCHAR(50) NOT NULL UNIQUE,
     created_by_user_id INT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (created_by_user_id) REFERENCES users(id) ON DELETE SET NULL,

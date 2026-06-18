@@ -2,8 +2,6 @@ from sqlalchemy.orm import Session
 from app.models.models import Book
 from app.schemas.book_schemas import (
     BookCreate,
-    BookPublicResponse,
-    BookAdminResponse,
     BookPublicUpdate,
     BookAdminUpdate,
 )
